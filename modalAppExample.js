@@ -1,7 +1,10 @@
+import Modal from 'react-modal';
+
 function createModalApp(config) {
   let isCalled = false;
 
   function run() {
+    console.log('run')
     if (isCalled) return;
 
     return new Promise((resolve) => renderModal(resolve))
@@ -14,3 +17,9 @@ function createModalApp(config) {
 
   return { run };
 }
+
+const $parentNode = document.getElementById('root');
+
+const $divTEt = document.createElement('div', 'test')
+
+$parentNode.appendChild(Modal)

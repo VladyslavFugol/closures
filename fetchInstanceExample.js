@@ -5,23 +5,104 @@ const HTTPMethods = {
   'DELETE': 'DELETE',
 };
 
+function errorHandler(response) {
+  if (!response.ok) {
+    throw new Error(response.text());
+  }
+
+  if (response.status === 204) {
+    throw new Error('Empty response');
+  }
+}
+
 function fetchInstance(config) {
-  const { baseUrl, headers } = config;
+  const { baseUrl, headers: baseHeaders } = config;
 
-  async function get(url) {
-    return await fetch(baseUrl + url, { method: HTTPMethods.GET, headers });
+  async function get(url, userHeaders) {
+    const requestUrl = baseUrl + url;
+    const requestOptions = {
+      method: HTTPMethods.GET,
+      headers: {
+        ...baseHeaders,
+        ...userHeaders,
+      },
+    };
+
+    try {
+      const response = await fetch(requestUrl, requestOptions);
+
+      errorHandler(response);
+
+      return await response.json();
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  async function post(url, body) {
-    return await fetch(baseUrl + url, { method: HTTPMethods.POST, headers, body });
+  async function post(url, body, userHeaders) {
+    const requestUrl = baseUrl + url;
+    const requestOptions = {
+      method: HTTPMethods.POST,
+      body: JSON.stringify(body),
+      headers: {
+        ...baseHeaders,
+        ...userHeaders,
+      },
+    };
+
+    try {
+      const response = await fetch(requestUrl, requestOptions);
+
+      errorHandler(response);
+
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  async function put(url, body) {
-    return await fetch(baseUrl + url, { method: HTTPMethods.PUT, headers, body });
+  async function put(url, body, userHeaders) {
+    const requestUrl = baseUrl + url;
+    const requestOptions = {
+      method: HTTPMethods.PUT,
+      body: JSON.stringify(body),
+      headers: {
+        ...baseHeaders,
+        ...userHeaders,
+      },
+    };
+
+    try {
+      const response = await fetch(requestUrl, requestOptions);
+
+      errorHandler(response);
+
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  async function deleteRequest(url, body) {
-    return await fetch(baseUrl + url, { method: HTTPMethods.DELETE, headers, body });
+  async function deleteRequest(url, body, userHeaders) {
+    const requestUrl = baseUrl + url;
+    const requestOptions = {
+      method: HTTPMethods.DELETE,
+      body: JSON.stringify(body),
+      headers: {
+        ...baseHeaders,
+        ...userHeaders,
+      },
+    };
+
+    try {
+      const response = await fetch(requestUrl, requestOptions);
+
+      errorHandler(response);
+
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return {

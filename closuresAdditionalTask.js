@@ -1,15 +1,17 @@
 //memo
 function memo(func) {
-  const cache = {};
+  const cache = new Map();
 
   return function (...args) {
-    const key = args.toString();
+    const key = args.some((arg) => typeof arg === 'object')
+      ? args[0]
+      : args.toString()
 
-    if (cache[key]) return cache[key];
+    if (cache.get(key)) return cache.get(key);
 
-    cache[key] = func.call(null, args);
+    cache.set(key, func.call(this, args));
 
-    return cache[key];
+    return cache.get(key);
   }
 }
 
