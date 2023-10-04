@@ -1,25 +1,37 @@
-import Modal from 'react-modal';
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+
+function getAppNode() {
+  return document.getElementById('modal');
+}
+
+let appReadyResolve = null;
+let isAppReady = new Promise((resolve) => appReadyResolve = resolve);
+let modalResultResolve = null;
+let onCloseModalResult = new Promise((resolve) => modalResultResolve = resolve);
 
 function createModalApp(config) {
-  let isCalled = false;
+  const root = createRoot(getAppNode());
 
-  function run() {
-    console.log('run')
-    if (isCalled) return;
+  const privateModalAPI = {
+    run: () => console.log('App is not ready'),
+  };
 
-    return new Promise((resolve) => renderModal(resolve))
+  function onSetModalMethods(callback) {
+    privateModalAPI.run = callback;
+    appReadyResolve();
   }
 
-  function renderModal(resolve) {
-    isCalled = true;
-    // рендерим тут модалку і прокидаєм в неї наш resolve
+  async function run() {
+    await isAppReady;
+    privateModalAPI.run();
+
+    return await onCloseModalResult;
   }
+
+  root.render(<Main onCloseModal={modalResultResolve} onSetModalMethod={onSetModalMethod}/>)
 
   return { run };
 }
 
-const $parentNode = document.getElementById('root');
-
-const $divTEt = document.createElement('div', 'test')
-
-$parentNode.appendChild(Modal)
+export default createModalApp;
